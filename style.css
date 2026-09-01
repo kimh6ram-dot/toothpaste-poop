@@ -1,0 +1,363 @@
+/* 치약똥 챌린지 — black & white minimal */
+:root {
+  --ink: #000000;
+  --gray: #777777;
+  --line: #dadada;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Malgun Gothic", sans-serif;
+  color: var(--ink);
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  position: relative;
+  width: min(100vw, 470px);
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ---------- 화면 공통 ---------- */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 22px;
+}
+.screen.active { display: flex; }
+.screen.scrollable { overflow-y: auto; justify-content: flex-start; }
+
+.cta {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 2px;
+  width: 200px;
+  height: 50px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cta:hover { background: #ffffff; color: #000000; }
+.cta.small { width: auto; height: 44px; padding: 0 24px; font-size: 15px; }
+
+.btn-secondary {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 2px;
+  height: 48px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-secondary:hover { background: #000000; color: #ffffff; }
+
+.btn-row { display: flex; gap: 8px; width: 100%; }
+.btn-row > * { flex: 1; }
+
+/* ---------- 인트로 ---------- */
+#screen-intro { justify-content: center; gap: 26px; text-align: center; }
+.intro-deco img {
+  width: min(240px, 60vw);
+  height: auto;
+  border: 1px solid #000000;
+  display: block;
+}
+.intro-title {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+/* ---------- 치약 선택 ---------- */
+#screen-select { justify-content: center; gap: 12px; }
+.select-title { font-size: 22px; font-weight: 800; margin-bottom: 14px; }
+.paste-list { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+.paste-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.paste-card:hover, .paste-card:active { background: #000000; color: #ffffff; }
+/* 치약 색 샘플 점 — 게임 콘텐츠 컬러라 허용 */
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  flex-shrink: 0;
+}
+
+/* ---------- 대결 인트로 ---------- */
+#screen-battle-intro { justify-content: center; gap: 18px; text-align: center; }
+.battle-label { font-size: 15px; font-weight: 700; }
+.battle-card {
+  border: 1px solid #000000;
+  border-radius: 2px;
+  padding: 26px 44px;
+  background: #ffffff;
+}
+.battle-card-name { font-size: 16px; font-weight: 600; color: var(--gray); }
+.battle-card-score { font-size: 48px; font-weight: 800; margin-top: 4px; }
+.battle-hint { font-size: 14px; color: var(--gray); }
+
+/* ---------- 게임 ---------- */
+#screen-game { padding: 0; }
+#stage { position: relative; flex: 1; width: 100%; }
+#game-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* 게임 영역 안에서만 */
+}
+
+#gauge {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 58%;
+  height: 10px;
+  background: #e5e5e5;
+  z-index: 4;
+}
+#gauge-fill { height: 100%; width: 100%; background: #000000; }
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  pointer-events: none; /* 포인터는 캔버스로 통과 */
+  transition: opacity 0.2s;
+  z-index: 5;
+}
+.overlay.hidden { opacity: 0; }
+.overlay .cta { pointer-events: auto; } /* 오버레이는 통과, 버튼만 클릭 가능 */
+.overlay.hidden .cta { pointer-events: none; }
+
+.tut-lines { text-align: center; }
+.tut-lines p { font-size: 23px; font-weight: 800; line-height: 1.9; }
+
+#judging { background: rgba(255, 255, 255, 0.55); }
+.judging-text { font-size: 22px; font-weight: 800; }
+.dots::after { content: ""; animation: dots 1s steps(4) infinite; }
+@keyframes dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
+
+/* ---------- 결과 (모바일 한 화면에 들어가게 압축) ---------- */
+#screen-result { gap: 5px; padding: 14px 22px; }
+/* 메인 화면처럼 세로 중앙 정렬 — 넘치면 auto 마진이 0이 되어 정상 스크롤 */
+#screen-result > :first-child { margin-top: auto; }
+#screen-result > :last-child { margin-bottom: auto; }
+.result-figure {
+  height: clamp(130px, 27vh, 240px);
+  height: clamp(130px, 27dvh, 240px);
+  aspect-ratio: 1 / 1;
+  border: 1px solid #000000;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.result-figure img { width: 92%; height: 92%; object-fit: contain; }
+.result-score { font-size: 34px; font-weight: 800; margin-top: 6px; line-height: 1; }
+.result-score .unit { font-size: 18px; font-weight: 700; margin-left: 2px; }
+.result-title { font-size: 17px; font-weight: 700; }
+.result-comment { font-size: 13px; color: var(--gray); text-align: center; }
+
+.subscores {
+  width: 100%;
+  max-width: 320px;
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+}
+.subscore {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 2px;
+  border-bottom: 1px solid #dddddd;
+  font-size: 13px;
+}
+.subscore .label { color: var(--gray); font-weight: 600; }
+.subscore .value { font-weight: 700; }
+
+.result-buttons { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 6px; margin: 12px 0 0; }
+.result-buttons .cta { width: 100%; height: 46px; font-size: 15px; }
+.result-buttons .btn-secondary { height: 42px; font-size: 14px; }
+
+/* ---------- 대결 결과 ---------- */
+#screen-battle-result { gap: 14px; padding-top: 40px; }
+.vs-heading { font-size: 22px; font-weight: 800; }
+.vs-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.vs-card {
+  border: 1px solid #000000;
+  border-radius: 2px;
+  background: #ffffff;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 140px;
+}
+.vs-figure {
+  width: 112px;
+  height: 112px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  overflow: hidden;
+}
+.vs-figure img { width: 100%; height: 100%; object-fit: contain; }
+.vs-name { font-size: 14px; font-weight: 600; color: var(--gray); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vs-score { font-size: 24px; font-weight: 800; }
+.vs-mid { font-size: 17px; font-weight: 800; color: var(--gray); }
+.vs-winner { font-size: 22px; font-weight: 800; margin-top: 8px; }
+
+/* ---------- 모달 / 토스트 ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  padding: 24px;
+}
+.modal.hidden { display: none; }
+.modal-card {
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 2px;
+  padding: 24px 20px;
+  width: min(100%, 320px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.modal-title { font-size: 17px; font-weight: 700; text-align: center; }
+#modal-input {
+  border: 1px solid #000000;
+  border-radius: 2px;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+}
+
+.toast {
+  position: fixed;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000000;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 60;
+  max-width: 86vw;
+  text-align: center;
+}
+.toast.show { opacity: 1; }
+
+/* 320px 폭 대응 */
+@media (max-width: 340px) {
+  .intro-title { font-size: 26px; }
+  .vs-card { width: 120px; }
+  .vs-figure { width: 94px; height: 94px; }
+}
+
+/* ---------- 컨닝페이퍼 (치약 선택 화면) ---------- */
+.cheat { width: 100%; max-width: 320px; margin-top: 8px; flex-shrink: 0; }
+.cheat summary {
+  list-style: none;
+  border: 1px solid #000000;
+  border-radius: 2px;
+  background: #ffffff;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.cheat summary::-webkit-details-marker { display: none; }
+.cheat summary::after { content: " ▾"; margin-left: 6px; color: var(--gray); }
+.cheat[open] summary::after { content: " ▴"; }
+.cheat-body {
+  border: 1px solid var(--line);
+  border-top: 0;
+  padding: 12px 14px;
+  background: #ffffff;
+}
+.cheat-body p {
+  font-size: 13px;
+  color: var(--gray);
+  line-height: 1.9;
+}
+.cheat-body .ck {
+  font-weight: 700;
+  color: #000000;
+  margin-right: 8px;
+}
+
+
+/* 도전장 인트로의 완성작 미리보기 */
+.battle-figure { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.battle-figure img { width: 190px; height: auto; max-height: 190px; object-fit: contain; display: block; }

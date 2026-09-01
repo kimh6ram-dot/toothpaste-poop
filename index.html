@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>치약똥 챌린지</title>
+<meta property="og:title" content="치약똥 챌린지">
+<meta property="og:description" content="완벽한 치약 똥을 만드세요">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ① 인트로 -->
+  <section id="screen-intro" class="screen active">
+    <div class="intro-deco">
+      <img src="assets/toothpaste_img.png" alt="칫솔 위에 짜여진 치약똥">
+    </div>
+    <h1 class="intro-title">완벽한 치약 똥을 만드세요</h1>
+    <button id="btn-start" class="cta">시작하기</button>
+  </section>
+
+  <!-- ①-2 치약 선택 -->
+  <section id="screen-select" class="screen">
+    <h2 class="select-title">치약을 선택하세요</h2>
+    <div class="paste-list">
+      <button class="paste-card" data-paste="strawberry"><span class="dot" style="background:#F58FB3"></span>딸기맛 핑크 치약</button>
+      <button class="paste-card" data-paste="menthol"><span class="dot" style="background:#38CFC3"></span>멘톨맛 청록 치약</button>
+      <button class="paste-card" data-paste="poop"><span class="dot" style="background:#8B5A2B"></span>똥 색깔 치약</button>
+    </div>
+  </section>
+
+  <!-- ② 대결 인트로 (도전장 링크로 진입 시) -->
+  <section id="screen-battle-intro" class="screen">
+    <p class="battle-label">도전장이 도착했습니다</p>
+    <div class="battle-card">
+      <div id="battle-owner-figure" class="battle-figure"></div>
+      <p id="battle-owner-name" class="battle-card-name">OOO의 기록</p>
+      <p id="battle-owner-score" class="battle-card-score">0점</p>
+    </div>
+    <p class="battle-hint">이 기록에 도전해보세요.</p>
+    <button id="btn-battle-start" class="cta">도전 시작</button>
+  </section>
+
+  <!-- ③ 게임 -->
+  <section id="screen-game" class="screen">
+    <div id="stage">
+      <canvas id="game-canvas"></canvas>
+      <div id="gauge"><div id="gauge-fill"></div></div>
+      <div id="tutorial" class="overlay">
+        <div class="tut-lines">
+          <p>1. 꾹 눌러서 짜기</p>
+          <p>2. 움직여서 모양 잡기</p>
+          <p>3. 떼는 순간 끝</p>
+        </div>
+        <button id="btn-play" class="cta">시작하기</button>
+      </div>
+      <div id="judging" class="overlay hidden">
+        <div class="judging-text">심사중<span class="dots"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ 결과 -->
+  <section id="screen-result" class="screen scrollable">
+    <div class="result-figure"><img id="result-image" alt="완성된 치약똥"></div>
+    <div id="result-score" class="result-score">0<span class="unit">점</span></div>
+    <div id="result-title" class="result-title"></div>
+    <div id="result-comment" class="result-comment"></div>
+    <div id="subscores" class="subscores"></div>
+    <details class="cheat">
+      <summary>100점 맞는 법</summary>
+      <div class="cheat-body">
+        <p><span class="ck">형태 25</span>아래는 넓게, 위로 갈수록 좁게</p>
+        <p><span class="ck">소용돌이 25</span>좌우 왕복을 점점 좁혀가며 감아올리기</p>
+        <p><span class="ck">중심 15</span>칫솔 정중앙에 쌓기</p>
+        <p><span class="ck">균형 15</span>좌우 대칭 맞추기</p>
+        <p><span class="ck">꼭지 10</span>꼭대기에서 멈춘 뒤 살살 떼기</p>
+        <p><span class="ck">청결 10</span>칫솔 밖으로 흘리지 않기</p>
+      </div>
+    </details>
+    <div class="result-buttons">
+      <button id="btn-challenge" class="cta">친구에게 도전장 보내기</button>
+      <div class="btn-row">
+        <button id="btn-save-img" class="btn-secondary">이미지 저장</button>
+        <button id="btn-retry" class="btn-secondary">다시 하기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ 대결 결과 -->
+  <section id="screen-battle-result" class="screen scrollable">
+    <h2 class="vs-heading">대결 결과</h2>
+    <div class="vs-row">
+      <div class="vs-card">
+        <div id="vs-a-figure" class="vs-figure"></div>
+        <div id="vs-a-name" class="vs-name"></div>
+        <div id="vs-a-score" class="vs-score"></div>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-card">
+        <div id="vs-b-figure" class="vs-figure"></div>
+        <div id="vs-b-name" class="vs-name"></div>
+        <div id="vs-b-score" class="vs-score"></div>
+      </div>
+    </div>
+    <div id="vs-winner" class="vs-winner"></div>
+    <div class="result-buttons">
+      <button id="btn-rematch" class="cta">다시 붙기</button>
+      <button id="btn-vs-detail" class="btn-secondary">내 결과 자세히 보기</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- 닉네임 입력 모달 -->
+<div id="modal" class="modal hidden">
+  <div class="modal-card">
+    <p class="modal-title">당신의 닉네임을 생성하세요</p>
+    <input id="modal-input" type="text" maxlength="12" placeholder="예: 황금손">
+    <div class="btn-row">
+      <button id="modal-cancel" class="btn-secondary">취소</button>
+      <button id="modal-ok" class="cta small">확인</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/brush-asset.js"></script>
+<script src="js/paste-types.js"></script>
+<script src="js/paste-engine.js"></script>
+<script src="js/score.js"></script>
+<script src="js/share.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
